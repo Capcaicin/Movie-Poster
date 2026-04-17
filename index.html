@@ -1,12 +1,4 @@
-    .awards-text-only {
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: #fff;
-      opacity: 0.35;
-      margin-bottom: 8px;
-      text-align: center;
-      line-height: 1.3;
-    }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -21,9 +13,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 22px; }
     body {
       background: #06060c;
-      color: #fff;
+      color: #d4af37;
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       overflow: hidden;
       height: 100vh;
@@ -79,8 +72,8 @@
     }
     .poster-hero {
       width: 70vw;
-      max-width: 420px;
-      max-height: 60vh;
+      max-width: 680px;
+      max-height: 58vh;
       object-fit: contain;
       border-radius: 16px;
       box-shadow:
@@ -94,7 +87,7 @@
       flex: 1;
       min-height: 0;
       width: 95%;
-      max-width: 580px;
+      max-width: 920px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -110,11 +103,11 @@
     .now-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 10px;
+      margin-bottom: 18px;
     }
     .now-dot {
-      width: 8px; height: 8px;
+      width: 12px; height: 12px;
       border-radius: 50%;
       background: #e50914;
       animation: dot-pulse 2s ease-in-out infinite;
@@ -160,15 +153,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
     .meta-chip {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.08);
-      padding: 5px 14px;
-      border-radius: 6px;
+      padding: 8px 20px;
+      border-radius: 8px;
       font-size: 0.9rem;
       font-weight: 600;
       white-space: nowrap;
@@ -196,23 +189,23 @@
     .ratings-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 14px;
+      margin-bottom: 20px;
       width: 100%;
     }
     .r-card {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 12px;
-      padding: 11px 12px;
+      border-radius: 14px;
+      padding: 16px 18px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
     }
 
     /* Score circle */
     .r-circle {
-      width: 44px; height: 44px;
+      width: 64px; height: 64px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -326,16 +319,28 @@
       color: #01d277;
     }
 
+    .awards-text-only {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #d4af37;
+      opacity: 0.8;
+      margin-bottom: 14px;
+      margin-top: 10px;
+      text-align: center;
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+    }
+
     /* ══════════════════════════════════════════════════════
        PROGRESS BAR
        ══════════════════════════════════════════════════════ */
     .progress-wrap {
       width: 100%;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .progress-bar-bg {
       width: 100%;
-      height: 3px;
+      height: 5px;
       background: rgba(255,255,255,0.08);
       border-radius: 2px;
       -webkit-border-radius: 2px;
@@ -361,10 +366,10 @@
        DETAILS SECTIONS
        ══════════════════════════════════════════════════════ */
     .summary {
-      font-size: 0.88rem;
-      line-height: 1.5;
+      font-size: 0.9rem;
+      line-height: 1.6;
       opacity: 0.5;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       text-align: center;
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -373,9 +378,9 @@
     }
 
     .credit-line {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       opacity: 0.45;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       text-align: center;
     }
     .credit-line strong { opacity: 1; font-weight: 700; }
@@ -388,28 +393,28 @@
     }
 
     .section-label {
-      font-size: 0.55rem;
+      font-size: 0.58rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.22em;
       opacity: 0.2;
-      margin-bottom: 6px;
-      margin-top: 10px;
+      margin-bottom: 8px;
+      margin-top: 12px;
     }
 
     /* Genre pills */
     .pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 7px;
       justify-content: center;
     }
     .pill {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.07);
-      padding: 5px 12px;
+      padding: 9px 20px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 500;
       white-space: nowrap;
     }
@@ -418,15 +423,15 @@
     .cast-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1px 18px;
+      gap: 3px 22px;
       width: 100%;
       text-align: left;
     }
     .cast-item {
-      font-size: 0.8rem;
+      font-size: 0.83rem;
       font-weight: 500;
       opacity: 0.6;
-      line-height: 1.6;
+      line-height: 1.7;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -449,7 +454,7 @@
       font-weight: 500;
     }
     .network-logo {
-      height: 20px;
+      height: 32px;
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
       opacity: 0.7;
@@ -791,10 +796,16 @@
     //  CONFIG
     // =====================================================================
     var TRAKT_USERNAME   = "tannorino";
-    var TRAKT_CLIENT_ID  = "6175700fbbeb1af49e05245a4563d7887593416bb3a36ce1d80da79b59d85990";
+    // Primary (new) key tried first; falls back to secondary on 401/403
+    var TRAKT_CLIENT_IDS = [
+      "6175700fbbeb1af49e05245a4563d7887593416bb3a36ce1d80da79b59d85990",
+      "9e5efaab5af9ff42f947317b83e0089f16dd7bd9b487dc7028dbaa62d5cb66e0"
+    ];
     var TMDB_API_KEY     = "86341e3584cca1bc1543a57b43d12bd9";
     var OMDB_API_KEY     = "trilogy";
-    var POLL_INTERVAL    = 15000;
+    var IS_TV = /Android.*TV|BRAVIA|SmartTV|Tizen|webOS|CrKey|AFT|AFTS|AFTB|AFTM|AFTT|AFTA/i.test(navigator.userAgent) ||
+                (screen.width >= 1280 && !("ontouchstart" in window) && !/Mobile|Tablet/i.test(navigator.userAgent));
+    var POLL_INTERVAL    = IS_TV ? 10000 : 15000;
 
     // =====================================================================
     //  State
@@ -807,6 +818,7 @@
     var MISS_GRACE    = 4;
     var playStarted   = null;
     var playExpires   = null;
+    var playRuntime   = null;
     var lastPollTime  = 0;
     var pollInFlight  = false;
     var currentTrailerKey = null;
@@ -841,14 +853,22 @@
     // =====================================================================
     //  API calls
     // =====================================================================
-    function getTraktWatching() {
+    var _traktKeyIdx = 0;
+    function getTraktWatching(keyIdx) {
+      keyIdx = (keyIdx !== undefined) ? keyIdx : _traktKeyIdx;
+      var key = TRAKT_CLIENT_IDS[keyIdx];
       return fetchWithTimeout(
         "https://api.trakt.tv/users/" + TRAKT_USERNAME + "/watching",
-        { headers: { "Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": TRAKT_CLIENT_ID } },
+        { headers: { "Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": key } },
         12000
       ).then(function(res) {
         if (res.status === 204) return null;
+        if ((res.status === 401 || res.status === 403) && keyIdx + 1 < TRAKT_CLIENT_IDS.length) {
+          _traktKeyIdx = keyIdx + 1;
+          return getTraktWatching(keyIdx + 1);
+        }
         if (!res.ok) throw new Error("Trakt " + res.status);
+        _traktKeyIdx = keyIdx;
         return res.json();
       });
     }
@@ -979,12 +999,26 @@
       progressTimer = setInterval(updateProgress, 1000);
     }
     function updateProgress() {
-      if (!playStarted || !playExpires) return;
-      var now = Date.now(), total = playExpires - playStarted, elapsed = now - playStarted;
-      var pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-      $("progress-fill").style.width = pct + "%";
-      $("progress-elapsed").textContent = fmtTime(Math.max(0, elapsed / 60000));
-      $("progress-remaining").textContent = "-" + fmtTime(Math.max(0, (total - elapsed) / 60000));
+      if (!playExpires) return;
+      var now = Date.now();
+      var remaining = playExpires - now;
+      if (playRuntime) {
+        // Use TMDB runtime + expires_at to derive actual position in the media
+        var fullMs = playRuntime * 60000;
+        var currentPos = fullMs - remaining;
+        var pct = Math.min(100, Math.max(0, (currentPos / fullMs) * 100));
+        $("progress-fill").style.width = pct + "%";
+        $("progress-elapsed").textContent = fmtTime(Math.max(0, currentPos / 60000));
+        $("progress-remaining").textContent = "-" + fmtTime(Math.max(0, remaining / 60000));
+      } else {
+        // Fallback: simple elapsed from start
+        var elapsed = now - playStarted;
+        var total = playExpires - playStarted;
+        var pct2 = Math.min(100, Math.max(0, (elapsed / total) * 100));
+        $("progress-fill").style.width = pct2 + "%";
+        $("progress-elapsed").textContent = fmtTime(Math.max(0, elapsed / 60000));
+        $("progress-remaining").textContent = "-" + fmtTime(Math.max(0, (total - elapsed) / 60000));
+      }
     }
 
     function showTrailer() { }
@@ -996,7 +1030,7 @@
     //  Render
     // =====================================================================
     function showIdle() {
-      currentId = null; playStarted = null; playExpires = null;
+      currentId = null; playStarted = null; playExpires = null; playRuntime = null;
       clearInterval(progressTimer);
       killTrailer();
       $("playing-screen").classList.add("hidden");
@@ -1186,9 +1220,34 @@
           $("playing-screen").style.opacity = "1";
         }, 50);
 
+        playRuntime = d.runtime || null;
         startProgress();
         currentTrailerKey = d.trailerKey || null;
       }, 400);
+    }
+
+    // =====================================================================
+    //  Trakt history fallback (Android TV: Stremio only sends stop scrobbles,
+    //  so /watching returns 204 while actively watching — history catches it)
+    // =====================================================================
+    function getTraktHistory() {
+      var key = TRAKT_CLIENT_IDS[_traktKeyIdx];
+      return fetchWithTimeout(
+        "https://api.trakt.tv/users/" + TRAKT_USERNAME + "/history?limit=1",
+        { headers: { "Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": key } },
+        12000
+      ).then(function(res) {
+        if (!res.ok) return null;
+        return res.json();
+      }).then(function(items) {
+        if (!items || !items.length) return null;
+        var item = items[0];
+        var watchedAt = new Date(item.watched_at).getTime();
+        // Only surface if watched within the last 4 hours
+        if (Date.now() - watchedAt > 4 * 60 * 60 * 1000) return null;
+        item._fromHistory = true;
+        return item;
+      }).catch(function() { return null; });
     }
 
     // =====================================================================
@@ -1202,10 +1261,19 @@
       getTraktWatching().then(function(trakt) {
         if (!trakt || !trakt.type) {
           if (currentId) { missCount++; if (missCount < MISS_GRACE) { pollInFlight = false; return; } }
-          showIdle(); pollInFlight = false; return;
+          // /watching returned nothing — try history (covers Android TV / Stremio app)
+          getTraktHistory().then(function(hist) {
+            if (hist) { missCount = 0; processItem(hist); }
+            else { showIdle(); pollInFlight = false; }
+          }).catch(function() { showIdle(); pollInFlight = false; });
+          return;
         }
         missCount = 0;
+        processItem(trakt);
+      }).catch(function(err) { console.error("[side-tv]", err); pollInFlight = false; });
+    }
 
+    function processItem(trakt) {
         var mediaType = trakt.type;
         var item = trakt[mediaType];
         var show = trakt.show || null;
@@ -1216,8 +1284,9 @@
         if (itemId === currentId) { pollInFlight = false; return; }
         currentId = itemId;
 
-        playStarted = trakt.started_at ? new Date(trakt.started_at).getTime() : null;
-        playExpires = trakt.expires_at ? new Date(trakt.expires_at).getTime() : null;
+        // History items have no expires_at — hide progress bar
+        playStarted = trakt._fromHistory ? null : (trakt.started_at ? new Date(trakt.started_at).getTime() : null);
+        playExpires = trakt._fromHistory ? null : (trakt.expires_at ? new Date(trakt.expires_at).getTime() : null);
 
         var tmdbType = mediaType === "episode" ? "tv" : "movie";
         var tmdbId = mediaType === "episode"
@@ -1361,7 +1430,6 @@
           }
 
         }).catch(function(err) { console.error("[side-tv]", err); pollInFlight = false; });
-      }).catch(function(err) { console.error("[side-tv]", err); pollInFlight = false; });
     }
 
     // =====================================================================
@@ -1370,11 +1438,18 @@
     function startPollInterval() { clearInterval(pollTimer); pollTimer = setInterval(poll, POLL_INTERVAL); }
     document.addEventListener("visibilitychange", function() { if (!document.hidden) { poll(); startPollInterval(); } });
     window.addEventListener("focus", function() { poll(); startPollInterval(); });
+    // bfcache restore (Android TV back navigation)
+    window.addEventListener("pageshow", function(e) { if (e.persisted) { poll(); startPollInterval(); } });
+    // Wake on any keypress / remote button (Android TV d-pad)
+    document.addEventListener("keydown", function() {
+      if (Date.now() - lastPollTime >= POLL_INTERVAL) { poll(); startPollInterval(); }
+    });
     function watchdog() {
       if (Date.now() - lastPollTime >= POLL_INTERVAL * 2) { poll(); startPollInterval(); }
-      setTimeout(watchdog, POLL_INTERVAL * 2.5);
+      setTimeout(watchdog, IS_TV ? POLL_INTERVAL * 1.5 : POLL_INTERVAL * 2.5);
     }
-    setTimeout(function() { location.reload(); }, 6 * 60 * 60 * 1000);
+    // On TV browsers auto-reload every 3h (6h on desktop) to prevent memory creep
+    setTimeout(function() { location.reload(); }, (IS_TV ? 3 : 6) * 60 * 60 * 1000);
 
     // Init
     showIdle();
