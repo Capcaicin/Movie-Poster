@@ -839,8 +839,9 @@
     var currentTrailerKey = null;
     var trailerTimer  = null;
     var trailerEndTimer = null;
-    var TRAILER_DELAY    = 3000;       // show trailer 3s after info renders
-    var TRAILER_DURATION = 60 * 1000;  // play for 60 seconds
+    var TRAILER_DELAY    = 3000;
+    var TRAILER_DURATION = 60 * 1000;
+    var infoScrollTimer  = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -1042,10 +1043,46 @@
     function killTrailer() { clearTimeout(trailerTimer); clearTimeout(trailerEndTimer); currentTrailerKey = null; }
 
     // =====================================================================
+    //  Info auto-scroll (so studio + credits at bottom are always seen)
+    // =====================================================================
+    function stopInfoScroll() {
+      clearInterval(infoScrollTimer);
+      infoScrollTimer = null;
+    }
+    function startInfoScroll() {
+      stopInfoScroll();
+      var el = document.getElementById("info-col");
+      if (!el) return;
+      el.scrollTop = 0;
+      var pauseAtBottom = false;
+      var pauseTicks = 0;
+      // Wait 4s at top before starting scroll
+      setTimeout(function() {
+        infoScrollTimer = setInterval(function() {
+          if (pauseAtBottom) {
+            pauseTicks++;
+            if (pauseTicks >= 60) { // ~3s pause at bottom
+              pauseAtBottom = false;
+              pauseTicks = 0;
+              el.scrollTop = 0;
+            }
+            return;
+          }
+          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) {
+            pauseAtBottom = true;
+          } else {
+            el.scrollTop += 1;
+          }
+        }, 40); // ~25px/sec
+      }, 4000);
+    }
+
+    // =====================================================================
     //  Render
     // =====================================================================
     function showIdle() {
       currentId = null; playStarted = null; playExpires = null; playRuntime = null;
+      stopInfoScroll();
       clearInterval(progressTimer);
       killTrailer();
       $("playing-screen").classList.add("hidden");
@@ -1249,6 +1286,7 @@
 
         playRuntime = d.runtime || null;
         startProgress();
+        startInfoScroll();
         currentTrailerKey = d.trailerKey || null;
       }, 400);
     }
@@ -1398,7 +1436,7 @@
             awards:        awards,
             boxOffice:     boxOffice,
             numSeasons:    tmdb.number_of_seasons || null,
-            cast:          ((tmdb.credits && tmdb.credits.cast) || []).slice(0, 8).map(function(a) {
+            cast:          ((tmdb.credits && tmdb.credits.cast) || []).slice(0, 6).map(function(a) {
                              return { name: a.name, character: a.character || "" };
                            }),
             network:       null,
