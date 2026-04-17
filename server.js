@@ -27,6 +27,7 @@ const TRAKT_USERNAME = process.env.TRAKT_USERNAME || "me";
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
 const TOKEN_PATH = path.join(__dirname, "token-store.json");
+const UA = "SideTV/1.0 (+https://github.com/tannorino/side-tv)";
 
 // ---------------------------------------------------------------------------
 // Token persistence
@@ -52,6 +53,7 @@ async function traktFetch(urlPath, options = {}) {
   const url = `https://api.trakt.tv${urlPath}`;
   const headers = {
     "Content-Type": "application/json",
+    "User-Agent": UA,
     "trakt-api-version": "2",
     "trakt-api-key": TRAKT_CLIENT_ID,
     ...options.headers,
@@ -68,7 +70,7 @@ async function refreshAccessToken() {
   try {
     const res = await fetch("https://api.trakt.tv/oauth/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "User-Agent": UA },
       body: JSON.stringify({
         refresh_token: tokens.refresh_token,
         client_id: TRAKT_CLIENT_ID,
@@ -132,7 +134,7 @@ app.post("/auth/device", async (req, res) => {
   try {
     const traktRes = await fetch("https://api.trakt.tv/oauth/device/code", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "User-Agent": UA },
       body: JSON.stringify({ client_id: TRAKT_CLIENT_ID }),
     });
     if (!traktRes.ok) {
@@ -166,7 +168,7 @@ app.post("/auth/poll", async (req, res) => {
   try {
     const traktRes = await fetch("https://api.trakt.tv/oauth/device/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "User-Agent": UA },
       body: JSON.stringify({
         code: pendingDevice.device_code,
         client_id: TRAKT_CLIENT_ID,
