@@ -738,6 +738,23 @@
     }
 
     // =====================================================================
+    //  Data sync (write to localStorage & window.displayData for Roku)
+    // =====================================================================
+    function writeDisplayData(display) {
+      // Store in localStorage for persistence
+      localStorage.setItem('displayData', JSON.stringify(display));
+      
+      // Store in window object for external access
+      window.displayData = display;
+      
+      // Log for debugging
+      console.log('[side-tv] Display data updated:', display);
+    }
+    
+    // Expose current display data globally
+    window.displayData = null;
+
+    // =====================================================================
     //  Main poll loop
     // =====================================================================
     async function poll() {
@@ -863,6 +880,9 @@
             }
           }
         }
+
+        // Write display object to data.json for Roku sync
+        writeDisplayData(display);
 
         render(display);
 
