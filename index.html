@@ -72,8 +72,8 @@
     }
     .poster-hero {
       width: 70vw;
-      max-width: 520px;
-      max-height: 42vh;
+      max-width: 480px;
+      max-height: 36vh;
       object-fit: contain;
       border-radius: 16px;
       box-shadow:
@@ -104,7 +104,7 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
     .now-dot {
       width: 12px; height: 12px;
@@ -153,8 +153,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
     .meta-chip {
@@ -189,23 +189,23 @@
     .ratings-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 12px;
       width: 100%;
     }
     .r-card {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px;
-      padding: 16px 18px;
+      border-radius: 12px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
     }
 
     /* Score circle */
     .r-circle {
-      width: 64px; height: 64px;
+      width: 50px; height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -305,7 +305,7 @@
       border: 1px solid rgba(1,210,119,0.1);
       border-radius: 9px;
       flex-shrink: 0;
-      margin-bottom: 22px;
+      margin-bottom: 12px;
     }
     .box-office-label {
       font-size: 0.6rem;
@@ -455,7 +455,7 @@
       font-weight: 500;
     }
     .network-logo {
-      height: 32px;
+      height: 22px;
       filter: brightness(0) invert(1);
       -webkit-filter: brightness(0) invert(1);
       opacity: 0.7;
@@ -841,7 +841,6 @@
     var trailerEndTimer = null;
     var TRAILER_DELAY    = 3000;
     var TRAILER_DURATION = 60 * 1000;
-    var infoScrollTimer  = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -1042,47 +1041,12 @@
     function scheduleTrailer() { }
     function killTrailer() { clearTimeout(trailerTimer); clearTimeout(trailerEndTimer); currentTrailerKey = null; }
 
-    // =====================================================================
-    //  Info auto-scroll (so studio + credits at bottom are always seen)
-    // =====================================================================
-    function stopInfoScroll() {
-      clearInterval(infoScrollTimer);
-      infoScrollTimer = null;
-    }
-    function startInfoScroll() {
-      stopInfoScroll();
-      var el = document.getElementById("info-col");
-      if (!el) return;
-      el.scrollTop = 0;
-      var pauseAtBottom = false;
-      var pauseTicks = 0;
-      // Wait 4s at top before starting scroll
-      setTimeout(function() {
-        infoScrollTimer = setInterval(function() {
-          if (pauseAtBottom) {
-            pauseTicks++;
-            if (pauseTicks >= 60) { // ~3s pause at bottom
-              pauseAtBottom = false;
-              pauseTicks = 0;
-              el.scrollTop = 0;
-            }
-            return;
-          }
-          if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) {
-            pauseAtBottom = true;
-          } else {
-            el.scrollTop += 1;
-          }
-        }, 40); // ~25px/sec
-      }, 4000);
-    }
 
     // =====================================================================
     //  Render
     // =====================================================================
     function showIdle() {
       currentId = null; playStarted = null; playExpires = null; playRuntime = null;
-      stopInfoScroll();
       clearInterval(progressTimer);
       killTrailer();
       $("playing-screen").classList.add("hidden");
@@ -1286,7 +1250,6 @@
 
         playRuntime = d.runtime || null;
         startProgress();
-        startInfoScroll();
         currentTrailerKey = d.trailerKey || null;
       }, 400);
     }
