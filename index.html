@@ -305,6 +305,7 @@
       border: 1px solid rgba(1,210,119,0.1);
       border-radius: 9px;
       flex-shrink: 0;
+      margin-bottom: 22px;
     }
     .box-office-label {
       font-size: 0.6rem;
@@ -1158,12 +1159,24 @@
 
         // ── Awards ──
         var awardsEl = $("awards-text-only");
+        var NO_AWARD_QUIPS = [
+          "Zero nominations. The Academy was busy.",
+          "Snubbed by everyone. Still here.",
+          "Not a single nomination. Bold artistic statement.",
+          "Awards? We don't do that here.",
+          "Critically invisible since release.",
+          "Zero nominations. Truly groundbreaking.",
+          "The Oscars have yet to acknowledge this masterpiece.",
+          "No awards. No notes.",
+          "Clean sweep — of absolutely nothing.",
+          "The voters stayed home for this one."
+        ];
         if (d.awards && d.awards !== "N/A") {
           awardsEl.textContent = d.awards;
-          awardsEl.classList.remove("hidden");
         } else {
-          awardsEl.classList.add("hidden");
+          awardsEl.textContent = NO_AWARD_QUIPS[Math.floor(Math.random() * NO_AWARD_QUIPS.length)];
         }
+        awardsEl.classList.remove("hidden");
 
         // ── Box Office ──
         var boBar = $("box-office-bar");
