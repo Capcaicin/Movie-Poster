@@ -5,120 +5,159 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Now Watching • Side TV</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0a14;
+      background: #08080f;
       color: #fff;
-      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       overflow: hidden;
       height: 100vh;
       width: 100vw;
     }
 
-    /* ── Backdrop ── */
+    /* ══════════════════════════════════════════════════════
+       PLAYING STATE — vertical poster-centric layout
+       ══════════════════════════════════════════════════════ */
+
+    /* ── Backdrop (subtle wash behind everything) ── */
     .backdrop {
       position: fixed; inset: 0;
       background-size: cover;
-      background-position: center right;
-      background-repeat: no-repeat;
-      transition: opacity 1s ease;
+      background-position: center;
+      opacity: 0.2;
+      filter: blur(40px) saturate(1.4);
+      transform: scale(1.1);
+      transition: opacity 1.2s ease;
       z-index: 1;
     }
-    .backdrop-gradient {
-      position: fixed; inset: 0;
-      background:
-        linear-gradient(to right, #0a0a14 0%, #0a0a14 28%, rgba(10,10,20,0.92) 42%, rgba(10,10,20,0.6) 60%, rgba(10,10,20,0.25) 80%, rgba(10,10,20,0.1) 100%),
-        linear-gradient(to top, #0a0a14 0%, rgba(10,10,20,0.6) 25%, transparent 50%);
-      z-index: 2;
-    }
 
-    /* ── Content panel (left side) ── */
-    .content {
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      width: 56%;
-      padding: 48px 50px 40px 50px;
+    /* ── Main vertical container ── */
+    .playing-screen {
+      position: fixed; inset: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      z-index: 3;
-      transition: opacity 0.5s ease;
+      align-items: center;
+      z-index: 2;
+      transition: opacity 0.6s ease;
+      overflow: hidden;
     }
+
+    /* ── Poster (hero, top portion) ── */
+    .poster-hero {
+      width: 62%;
+      max-width: 400px;
+      margin-top: 4vh;
+      border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+      transition: opacity 0.8s ease;
+      flex-shrink: 0;
+    }
+
+    /* ── Info panel (below poster) ── */
+    .info-panel {
+      width: 88%;
+      max-width: 480px;
+      margin-top: 3vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex-shrink: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-bottom: 3vh;
+      /* hide scrollbar */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .info-panel::-webkit-scrollbar { display: none; }
 
     /* ── Title ── */
     .show-title {
-      font-size: 3.8rem;
+      font-size: 2.4rem;
       font-weight: 900;
-      line-height: 1.0;
-      letter-spacing: -0.02em;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
       text-transform: uppercase;
-      margin-bottom: 8px;
-      text-shadow: 0 4px 30px rgba(0,0,0,0.7);
+      text-shadow: 0 4px 30px rgba(0,0,0,0.6);
     }
 
     /* ── Tagline ── */
     .tagline {
-      font-size: 1.05rem;
+      font-size: 0.85rem;
       font-style: italic;
-      opacity: 0.5;
-      margin-bottom: 18px;
-      max-width: 500px;
+      opacity: 0.45;
+      margin-top: 6px;
     }
 
-    /* ── Meta row ── */
+    /* ── Ratings row (IMDb + RT + Metacritic) ── */
+    .ratings-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .rating-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .rating-icon {
+      width: 20px; height: 20px;
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 900;
+      flex-shrink: 0;
+    }
+    .rating-icon.imdb  { background: #f5c518; color: #000; }
+    .rating-icon.rt     { background: #FA320A; color: #fff; }
+    .rating-icon.meta   { background: #66cc33; color: #000; }
+    .rating-icon.rt.rotten { background: #0AC855; }
+
+    /* ── Meta row (cert, runtime, year) ── */
     .meta-row {
       display: flex;
       align-items: center;
-      gap: 18px;
-      font-size: 1.05rem;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 12px;
+      font-size: 0.88rem;
       font-weight: 500;
-      opacity: 0.9;
-      margin-bottom: 18px;
+      opacity: 0.7;
       flex-wrap: wrap;
     }
-    .meta-row .separator { opacity: 0.35; }
-    .rating-group {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .imdb-badge {
-      display: inline-block;
-      background: #f5c518;
-      color: #000;
-      font-weight: 800;
-      font-size: 0.65rem;
-      padding: 2px 5px;
-      border-radius: 3px;
-      letter-spacing: 0.05em;
-    }
+    .meta-row .sep { opacity: 0.3; }
     .cert-badge {
-      display: inline-block;
-      border: 1.5px solid rgba(255,255,255,0.5);
-      padding: 2px 8px;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      padding: 1px 7px;
       border-radius: 3px;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.04em;
-      opacity: 0.85;
     }
     .episode-tag {
-      background: rgba(255,255,255,0.15);
-      padding: 4px 12px;
+      background: rgba(255,255,255,0.12);
+      padding: 3px 10px;
       border-radius: 4px;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
 
     /* ── Progress bar ── */
     .progress-wrap {
-      margin-bottom: 20px;
-      max-width: 500px;
+      width: 100%;
+      margin-top: 14px;
     }
     .progress-bar-bg {
       width: 100%;
-      height: 4px;
-      background: rgba(255,255,255,0.15);
+      height: 3px;
+      background: rgba(255,255,255,0.12);
       border-radius: 2px;
       overflow: hidden;
     }
@@ -131,20 +170,20 @@
     .progress-times {
       display: flex;
       justify-content: space-between;
-      font-size: 0.78rem;
-      opacity: 0.45;
-      margin-top: 5px;
+      font-size: 0.68rem;
+      opacity: 0.35;
+      margin-top: 4px;
       font-variant-numeric: tabular-nums;
     }
 
     /* ── Section labels ── */
     .section-label {
-      font-size: 0.72rem;
+      font-size: 0.62rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      opacity: 0.4;
-      margin-bottom: 8px;
+      letter-spacing: 0.18em;
+      opacity: 0.3;
+      margin-bottom: 7px;
       margin-top: 16px;
     }
 
@@ -152,91 +191,124 @@
     .pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
+      gap: 6px;
+      justify-content: center;
     }
     .pill {
-      background: rgba(255,255,255,0.1);
-      padding: 5px 14px;
+      background: rgba(255,255,255,0.08);
+      padding: 4px 12px;
       border-radius: 20px;
-      font-size: 0.88rem;
+      font-size: 0.78rem;
       font-weight: 500;
       white-space: nowrap;
     }
 
-    /* ── Director / Creator ── */
+    /* ── Credits ── */
     .credit-line {
-      font-size: 0.92rem;
-      opacity: 0.65;
-      margin-top: 14px;
+      font-size: 0.8rem;
+      opacity: 0.5;
+      margin-top: 12px;
     }
-    .credit-line strong {
-      opacity: 1;
-      font-weight: 600;
-    }
+    .credit-line strong { opacity: 1; font-weight: 600; }
 
     /* ── Summary ── */
     .summary {
-      font-size: 1.0rem;
+      font-size: 0.82rem;
       line-height: 1.55;
-      opacity: 0.8;
-      max-width: 560px;
+      opacity: 0.65;
       margin-top: 6px;
+      text-align: center;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    /* ── Network / Studio ── */
+    /* ── Network ── */
     .network-line {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 18px;
-      opacity: 0.5;
-      font-size: 0.85rem;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+      opacity: 0.35;
+      font-size: 0.75rem;
+      font-weight: 500;
     }
     .network-logo {
-      height: 20px;
+      height: 16px;
       filter: brightness(0) invert(1);
       opacity: 0.7;
     }
 
-    /* ── Poster (bottom-right accent) ── */
-    .poster-float {
-      position: fixed;
-      bottom: 40px;
-      right: 50px;
-      width: 180px;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-      z-index: 4;
-      transition: opacity 0.6s ease;
-    }
-
-    /* ── Idle ── */
+    /* ══════════════════════════════════════════════════════
+       IDLE STATE — stylish "nothing playing" screen
+       ══════════════════════════════════════════════════════ */
     .idle-screen {
       position: fixed; inset: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 5;
-      background: #0a0a14;
-    }
-    .idle-text {
-      font-size: 2.2rem;
-      opacity: 0.35;
-      font-weight: 300;
+      background: #08080f;
     }
 
-    /* ── Trailer overlay ── */
+    /* Animated gradient orb */
+    .idle-orb {
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%,
+        rgba(229,9,20,0.25) 0%,
+        rgba(100,50,200,0.15) 40%,
+        rgba(20,20,60,0.05) 70%,
+        transparent 100%);
+      filter: blur(60px);
+      animation: orb-pulse 6s ease-in-out infinite;
+      position: absolute;
+    }
+    @keyframes orb-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50%      { transform: scale(1.15); opacity: 0.9; }
+    }
+
+    .idle-icon {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      opacity: 0.25;
+      z-index: 1;
+    }
+    .idle-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      opacity: 0.5;
+      z-index: 1;
+      letter-spacing: -0.01em;
+    }
+    .idle-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.2;
+      margin-top: 8px;
+      z-index: 1;
+      font-weight: 400;
+    }
+    .idle-clock {
+      font-size: 4rem;
+      font-weight: 200;
+      opacity: 0.15;
+      margin-top: 40px;
+      z-index: 1;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       TRAILER
+       ══════════════════════════════════════════════════════ */
     .trailer-overlay {
       position: fixed; inset: 0;
       background: #000;
       z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.8s ease;
@@ -246,9 +318,7 @@
       pointer-events: auto;
     }
     .trailer-overlay iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+      width: 100%; height: 100%; border: none;
     }
 
     .hidden { display: none !important; }
@@ -256,62 +326,70 @@
 </head>
 <body>
 
-  <!-- BACKDROP -->
+  <!-- BACKDROP (blurred color wash) -->
   <div class="backdrop" id="backdrop"></div>
-  <div class="backdrop-gradient" id="backdrop-gradient"></div>
 
-  <!-- POSTER (floating bottom-right) -->
-  <img class="poster-float hidden" id="poster" src="" alt="">
+  <!-- ═══ PLAYING SCREEN ═══ -->
+  <div class="playing-screen hidden" id="playing-screen">
+    <!-- Poster -->
+    <img class="poster-hero" id="poster" src="" alt="">
 
-  <!-- CONTENT (left panel) -->
-  <div class="content" id="content">
-    <div class="show-title" id="title"></div>
-    <div class="tagline hidden" id="tagline"></div>
+    <!-- Info below poster -->
+    <div class="info-panel" id="info-panel">
+      <div class="show-title" id="title"></div>
+      <div class="tagline hidden" id="tagline"></div>
 
-    <div class="meta-row" id="meta-row">
-      <span class="cert-badge hidden" id="cert"></span>
-      <span id="runtime"></span>
-      <span class="separator">•</span>
-      <span id="year"></span>
-      <span class="separator">•</span>
-      <span class="rating-group" id="rating"></span>
-      <span class="episode-tag hidden" id="episode-tag"></span>
-    </div>
+      <!-- Ratings: IMDb · RT · Metacritic -->
+      <div class="ratings-row" id="ratings-row"></div>
 
-    <!-- Progress bar -->
-    <div class="progress-wrap hidden" id="progress-wrap">
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progress-fill"></div>
+      <!-- Meta: cert · runtime · year · episode -->
+      <div class="meta-row" id="meta-row">
+        <span class="cert-badge hidden" id="cert"></span>
+        <span id="runtime"></span>
+        <span class="sep">•</span>
+        <span id="year"></span>
+        <span class="episode-tag hidden" id="episode-tag"></span>
       </div>
-      <div class="progress-times">
-        <span id="progress-elapsed">0:00</span>
-        <span id="progress-remaining">0:00</span>
+
+      <!-- Progress -->
+      <div class="progress-wrap hidden" id="progress-wrap">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-times">
+          <span id="progress-elapsed">0:00</span>
+          <span id="progress-remaining">0:00</span>
+        </div>
       </div>
-    </div>
 
-    <div class="section-label" id="genres-label">GENRES</div>
-    <div class="pills" id="genres"></div>
+      <div class="section-label" id="genres-label">GENRES</div>
+      <div class="pills" id="genres"></div>
 
-    <div class="section-label" id="cast-label">CAST</div>
-    <div class="pills" id="cast"></div>
+      <div class="section-label" id="cast-label">CAST</div>
+      <div class="pills" id="cast"></div>
 
-    <div class="credit-line hidden" id="credit-line"></div>
+      <div class="credit-line hidden" id="credit-line"></div>
 
-    <div class="section-label" id="summary-label">SUMMARY</div>
-    <div class="summary" id="summary"></div>
+      <div class="section-label" id="summary-label">SUMMARY</div>
+      <div class="summary" id="summary"></div>
 
-    <div class="network-line hidden" id="network-line">
-      <img class="network-logo hidden" id="network-logo" src="" alt="">
-      <span id="network-name"></span>
+      <div class="network-line hidden" id="network-line">
+        <img class="network-logo hidden" id="network-logo" src="" alt="">
+        <span id="network-name"></span>
+      </div>
     </div>
   </div>
 
-  <!-- IDLE -->
-  <div class="idle-screen hidden" id="idle">
-    <div class="idle-text">Nothing playing right now</div>
+  <!-- ═══ IDLE SCREEN ═══ -->
+  <div class="idle-screen" id="idle-screen">
+    <div class="idle-orb"></div>
+    <div class="idle-icon">▶</div>
+    <div class="idle-title">Nothing Playing</div>
+    <div class="idle-subtitle">Start watching something on Stremio</div>
+    <div class="idle-clock" id="idle-clock"></div>
   </div>
 
-  <!-- TRAILER OVERLAY -->
+  <!-- ═══ TRAILER ═══ -->
   <div class="trailer-overlay" id="trailer-overlay">
     <iframe id="trailer-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </div>
@@ -323,6 +401,7 @@
     const TRAKT_USERNAME   = "tannorino";
     const TRAKT_CLIENT_ID  = "9e5efaab5af9ff42f947317b83e0089f16dd7bd9b487dc7028dbaa62d5cb66e0";
     const TMDB_API_KEY     = "86341e3584cca1bc1543a57b43d12bd9";
+    const OMDB_API_KEY     = "trilogy";  // free tier — 1000 req/day
     const POLL_INTERVAL    = 15000;
     const TRAILER_INTERVAL = 5 * 60 * 1000;
     const TRAILER_DURATION = 60 * 1000;
@@ -334,10 +413,9 @@
     let currentTrailerKey = null;
     let trailerTimer = null;
     let progressTimer = null;
+    let clockTimer = null;
     let missCount = 0;
     const MISS_GRACE = 4;
-
-    // Trakt timestamps for progress bar
     let playStarted = null;
     let playExpires = null;
 
@@ -380,6 +458,16 @@
       return res.json();
     }
 
+    async function getOmdbRatings(imdbId) {
+      try {
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${imdbId}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data.Response === "False") return null;
+        return data.Ratings || [];
+      } catch { return null; }
+    }
+
     // =====================================================================
     //  Helpers
     // =====================================================================
@@ -411,6 +499,23 @@
     }
 
     // =====================================================================
+    //  Idle clock
+    // =====================================================================
+    function startIdleClock() {
+      clearInterval(clockTimer);
+      updateClock();
+      clockTimer = setInterval(updateClock, 1000);
+    }
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const ampm = h >= 12 ? "PM" : "AM";
+      const h12 = h % 12 || 12;
+      $("idle-clock").textContent = `${h12}:${m} ${ampm}`;
+    }
+
+    // =====================================================================
     //  Progress bar
     // =====================================================================
     function startProgress() {
@@ -430,9 +535,7 @@
       const total   = playExpires - playStarted;
       const elapsed = now - playStarted;
       const pct     = Math.min(100, Math.max(0, (elapsed / total) * 100));
-
       $("progress-fill").style.width = pct + "%";
-
       const elapsedMin = Math.max(0, elapsed / 60000);
       const remainMin  = Math.max(0, (total - elapsed) / 60000);
       $("progress-elapsed").textContent   = fmtTime(elapsedMin);
@@ -469,36 +572,29 @@
       playExpires = null;
       clearTimeout(trailerTimer);
       clearInterval(progressTimer);
-      $("content").classList.add("hidden");
-      $("poster").classList.add("hidden");
+      $("playing-screen").classList.add("hidden");
       $("backdrop").style.backgroundImage = "";
-      $("backdrop-gradient").classList.add("hidden");
-      $("idle").classList.remove("hidden");
+      $("idle-screen").classList.remove("hidden");
       $("trailer-overlay").classList.remove("active");
       $("trailer-iframe").src = "";
+      startIdleClock();
     }
 
     function render(data) {
-      $("idle").classList.add("hidden");
-      $("backdrop-gradient").classList.remove("hidden");
+      clearInterval(clockTimer);
+      $("idle-screen").classList.add("hidden");
 
-      $("content").style.opacity = "0";
+      $("playing-screen").style.opacity = "0";
       $("backdrop").style.opacity = "0";
-      $("poster").style.opacity  = "0";
 
       setTimeout(() => {
         // Backdrop
-        if (data.backdrop) {
-          $("backdrop").style.backgroundImage = `url(${data.backdrop})`;
+        if (data.poster) {
+          $("backdrop").style.backgroundImage = `url(${data.poster})`;
         }
 
         // Poster
-        if (data.poster) {
-          $("poster").src = data.poster;
-          $("poster").classList.remove("hidden");
-        } else {
-          $("poster").classList.add("hidden");
-        }
+        $("poster").src = data.poster || "";
 
         // Title
         $("title").textContent = data.title || "";
@@ -510,6 +606,33 @@
           tagEl.classList.remove("hidden");
         } else {
           tagEl.classList.add("hidden");
+        }
+
+        // ── Ratings row (IMDb + RT + Metacritic) ──
+        const ratingsEl = $("ratings-row");
+        ratingsEl.innerHTML = "";
+
+        if (data.imdbRating) {
+          ratingsEl.innerHTML += `
+            <div class="rating-badge">
+              <div class="rating-icon imdb">IMDb</div>
+              <span>${data.imdbRating}</span>
+            </div>`;
+        }
+        if (data.rtScore != null) {
+          const fresh = parseInt(data.rtScore) >= 60;
+          ratingsEl.innerHTML += `
+            <div class="rating-badge">
+              <div class="rating-icon rt ${fresh ? '' : 'rotten'}">${fresh ? '🍅' : '🟢'}</div>
+              <span>${data.rtScore}</span>
+            </div>`;
+        }
+        if (data.metaScore) {
+          ratingsEl.innerHTML += `
+            <div class="rating-badge">
+              <div class="rating-icon meta">M</div>
+              <span>${data.metaScore}</span>
+            </div>`;
         }
 
         // Certification
@@ -528,14 +651,6 @@
         $("year").textContent = data.year
           ? `${data.year}${data.status === "Returning Series" ? "–" : ""}`
           : "";
-
-        // Rating
-        const ratingEl = $("rating");
-        if (data.rating) {
-          ratingEl.innerHTML = `${data.rating.toFixed(1)} <span class="imdb-badge">IMDb</span>`;
-        } else {
-          ratingEl.innerHTML = "";
-        }
 
         // Episode tag
         const epTag = $("episode-tag");
@@ -570,7 +685,7 @@
           data.cast.forEach(c => {
             const span = document.createElement("span");
             span.className = "pill";
-            span.textContent = c.character ? `${c.name} as ${c.character}` : c.name;
+            span.textContent = c.name;
             castEl.appendChild(span);
           });
           $("cast-label").classList.remove("hidden");
@@ -607,20 +722,15 @@
           netLine.classList.add("hidden");
         }
 
-        // Show content
-        $("content").classList.remove("hidden");
+        // Show
+        $("playing-screen").classList.remove("hidden");
 
-        // Fade in
         requestAnimationFrame(() => {
-          $("backdrop").style.opacity = "1";
-          $("content").style.opacity  = "1";
-          $("poster").style.opacity   = "1";
+          $("backdrop").style.opacity = "0.2";
+          $("playing-screen").style.opacity = "1";
         });
 
-        // Progress bar
         startProgress();
-
-        // Trailer
         currentTrailerKey = data.trailerKey || null;
         scheduleTrailer();
 
@@ -655,7 +765,7 @@
         if (itemId === currentId) return;
         currentId = itemId;
 
-        // Store Trakt timestamps for progress bar
+        // Trakt timestamps
         playStarted = trakt.started_at ? new Date(trakt.started_at).getTime() : null;
         playExpires = trakt.expires_at ? new Date(trakt.expires_at).getTime() : null;
 
@@ -664,8 +774,28 @@
         const tmdbId   = mediaType === "episode" ? show?.ids?.tmdb : item.ids?.tmdb;
         if (!tmdbId) { showIdle(); return; }
 
-        const tmdb = await getTmdbDetails(tmdbType, tmdbId);
+        // Fetch TMDB + OMDb in parallel
+        const imdbId = mediaType === "episode" ? show?.ids?.imdb : item.ids?.imdb;
+        const [tmdb, omdbRatings] = await Promise.all([
+          getTmdbDetails(tmdbType, tmdbId),
+          imdbId ? getOmdbRatings(imdbId) : Promise.resolve(null),
+        ]);
+
         if (!tmdb) { showIdle(); return; }
+
+        // Parse OMDb ratings
+        let imdbRating = null, rtScore = null, metaScore = null;
+        if (omdbRatings) {
+          for (const r of omdbRatings) {
+            if (r.Source === "Internet Movie Database") imdbRating = r.Value.replace("/10", "");
+            if (r.Source === "Rotten Tomatoes")         rtScore    = r.Value;
+            if (r.Source === "Metacritic")              metaScore  = r.Value.replace("/100", "");
+          }
+        }
+        // Fallback IMDb from TMDB
+        if (!imdbRating && tmdb.vote_average) {
+          imdbRating = tmdb.vote_average.toFixed(1);
+        }
 
         // Build display
         const display = {
@@ -673,18 +803,18 @@
           tagline:       tmdb.tagline || null,
           year:          tmdb.release_date?.slice(0,4) || tmdb.first_air_date?.slice(0,4) || item.year,
           runtime:       tmdb.runtime || tmdb.episode_run_time?.[0] || null,
-          rating:        tmdb.vote_average || null,
+          imdbRating,
+          rtScore,
+          metaScore,
           certification: getCertification(tmdb, tmdbType),
           status:        tmdb.status || null,
           overview:      tmdb.overview || "",
           isTV:          tmdbType === "tv",
-          backdrop:      tmdb.backdrop_path ? `https://image.tmdb.org/t/p/original${tmdb.backdrop_path}` : null,
-          poster:        tmdb.poster_path   ? `https://image.tmdb.org/t/p/w500${tmdb.poster_path}` : null,
+          poster:        tmdb.poster_path   ? `https://image.tmdb.org/t/p/w780${tmdb.poster_path}` : null,
           genres:        (tmdb.genres || []).map(g => g.name),
           directors:     getDirector(tmdb, tmdbType),
           cast:          (tmdb.credits?.cast || []).slice(0, 6).map(a => ({
                            name: a.name,
-                           character: a.character || null,
                          })),
           network:       null,
           trailerKey:    null,
@@ -726,11 +856,10 @@
           if (ep) {
             if (ep.overview) display.overview = ep.overview;
             if (ep.runtime)  display.runtime  = ep.runtime;
-            // Episode director
             const epDir = (ep.credits?.crew || []).filter(c => c.job === "Director").map(c => c.name);
             if (epDir.length) {
               display.directors = epDir;
-              display.isTV = false; // say "Directed by" for episode director
+              display.isTV = false;
             }
           }
         }
