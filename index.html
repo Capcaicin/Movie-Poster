@@ -225,6 +225,8 @@
     let currentId = null;
     let currentTrailerKey = null;
     let trailerTimer = null;
+    let missCount = 0;                        // how many polls returned "nothing"
+    const MISS_GRACE = 4;                     // stay on screen for 4 misses (60s at 15s interval)
 
     // =====================================================================
     //  DOM helpers
@@ -405,9 +407,15 @@
         const trakt = await getTraktWatching();
 
         if (!trakt || !trakt.type) {
+          // Don't immediately wipe — allow brief scrobbling gaps
+          if (currentId) {
+            missCount++;
+            if (missCount < MISS_GRACE) return; // keep showing last content
+          }
           showIdle();
           return;
         }
+        missCount = 0; // reset on successful fetch
 
         const mediaType = trakt.type;
         const item      = trakt[mediaType];
