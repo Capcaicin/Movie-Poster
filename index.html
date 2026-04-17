@@ -4,180 +4,485 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Now Watching • Side TV</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { margin: 0; background: #0a0a0a; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; height: 100vh; }
-    .fanart { position: absolute; inset: 0; object-fit: cover; opacity: 0.35; filter: blur(8px); z-index: 1; transition: opacity 0.6s ease; }
-    .poster { max-height: 68vh; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.6); border-radius: 16px; z-index: 2; transition: opacity 0.6s ease; }
-    .info { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, #0a0a0a, transparent); padding: 40px 60px; z-index: 3; }
-    .title { font-size: 3.2rem; font-weight: 700; line-height: 1.1; margin: 0 0 12px 0; }
-    .meta { font-size: 1.35rem; opacity: 0.9; margin-bottom: 16px; }
-    .plot { font-size: 1.25rem; max-width: 820px; line-height: 1.5; opacity: 0.85; }
-    .cast { display: flex; gap: 24px; margin-top: 28px; overflow-x: auto; padding-bottom: 12px; }
-    .cast-member { text-align: center; width: 92px; flex-shrink: 0; }
-    .cast-img { width: 82px; height: 82px; border-radius: 9999px; object-fit: cover; border: 3px solid #fff; }
-    .cast-name { font-size: 0.95rem; margin-top: 8px; opacity: 0.85; }
-    .nothing { font-size: 2.8rem; opacity: 0.6; text-align: center; margin-top: 20vh; }
-    .episode-info { font-size: 1.1rem; opacity: 0.75; margin-bottom: 8px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a14;
+      color: #fff;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ── Backdrop ── */
+    .backdrop {
+      position: fixed; inset: 0;
+      background-size: cover;
+      background-position: center right;
+      background-repeat: no-repeat;
+      transition: opacity 1s ease;
+      z-index: 1;
+    }
+    .backdrop-gradient {
+      position: fixed; inset: 0;
+      background: linear-gradient(to right, #0a0a14 0%, #0a0a14 30%, rgba(10,10,20,0.85) 50%, rgba(10,10,20,0.4) 75%, rgba(10,10,20,0.2) 100%),
+                  linear-gradient(to top, #0a0a14 0%, transparent 40%);
+      z-index: 2;
+    }
+
+    /* ── Content panel (left side) ── */
+    .content {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 55%;
+      padding: 60px 60px 50px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 3;
+      transition: opacity 0.5s ease;
+    }
+
+    /* ── Title ── */
+    .show-title {
+      font-size: 4.2rem;
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.7);
+    }
+
+    /* ── Meta row: runtime, year, rating ── */
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 1.15rem;
+      font-weight: 500;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+    .meta-row .rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .imdb-badge {
+      display: inline-block;
+      background: #f5c518;
+      color: #000;
+      font-weight: 800;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+    .episode-tag {
+      background: rgba(255,255,255,0.15);
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.5;
+      margin-bottom: 10px;
+      margin-top: 20px;
+    }
+
+    /* ── Pills (genres + cast) ── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      background: rgba(255,255,255,0.12);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* ── Summary ── */
+    .summary {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      opacity: 0.85;
+      max-width: 600px;
+      margin-top: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── Idle state ── */
+    .idle-screen {
+      position: fixed; inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      background: #0a0a14;
+    }
+    .idle-text {
+      font-size: 2.2rem;
+      opacity: 0.35;
+      font-weight: 300;
+    }
+
+    /* ── Trailer overlay ── */
+    .trailer-overlay {
+      position: fixed; inset: 0;
+      background: #000;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    .trailer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .trailer-overlay iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ── Fade transitions ── */
+    .fade-out { opacity: 0 !important; }
+    .fade-in  { opacity: 1 !important; }
+
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="flex items-center justify-center">
-  <img id="fanart" class="fanart" src="" alt="">
+<body>
 
-  <div class="relative z-10 flex flex-col items-center justify-center h-screen w-full px-8">
-    <img id="poster" class="poster hidden" src="" alt="Poster">
+  <!-- BACKDROP -->
+  <div class="backdrop" id="backdrop"></div>
+  <div class="backdrop-gradient" id="backdrop-gradient"></div>
 
-    <div id="info" class="info hidden">
-      <div class="episode-info hidden" id="episode-info"></div>
-      <div class="title" id="title"></div>
-      <div class="meta" id="meta"></div>
-      <div class="plot" id="plot"></div>
-      <div id="cast-container" class="cast hidden"></div>
+  <!-- CONTENT (left panel) -->
+  <div class="content" id="content">
+    <div class="show-title" id="title"></div>
+
+    <div class="meta-row" id="meta-row">
+      <span id="runtime"></span>
+      <span id="year"></span>
+      <span class="rating" id="rating"></span>
+      <span class="episode-tag hidden" id="episode-tag"></span>
     </div>
 
-    <div id="nothing" class="nothing hidden">Nothing playing right now</div>
+    <div class="section-label" id="genres-label">GENRES</div>
+    <div class="pills" id="genres"></div>
+
+    <div class="section-label" id="cast-label">CAST</div>
+    <div class="pills" id="cast"></div>
+
+    <div class="section-label" id="summary-label">SUMMARY</div>
+    <div class="summary" id="summary"></div>
+  </div>
+
+  <!-- IDLE -->
+  <div class="idle-screen hidden" id="idle">
+    <div class="idle-text">Nothing playing right now</div>
+  </div>
+
+  <!-- TRAILER OVERLAY -->
+  <div class="trailer-overlay" id="trailer-overlay">
+    <iframe id="trailer-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </div>
 
   <script>
-    const TMDB_API_KEY = "86341e3584cca1bc1543a57b43d12bd9";
-    const TRAKT_USERNAME = "tannorino";
+    // =====================================================================
+    //  CONFIG
+    // =====================================================================
+    const TRAKT_USERNAME  = "tannorino";
+    const TRAKT_CLIENT_ID = "9e5efaab5af9ff42f947317b83e0089f16dd7bd9b487dc7028dbaa62d5cb66e0";
+    const TMDB_API_KEY    = "86341e3584cca1bc1543a57b43d12bd9";
+    const POLL_INTERVAL   = 15000;
+    const TRAILER_INTERVAL = 5 * 60 * 1000; // play trailer every 5 minutes
+    const TRAILER_DURATION = 60 * 1000;      // show trailer for 60 seconds
 
-    let currentContent = null;
+    // =====================================================================
+    //  State
+    // =====================================================================
+    let currentId = null;
+    let currentTrailerKey = null;
+    let trailerTimer = null;
 
-    async function fetchNowPlaying() {
-      try {
-        // Fetch from public Trakt endpoint
-        const traktRes = await fetch(`https://api.trakt.tv/users/${TRAKT_USERNAME}/watching`, {
+    // =====================================================================
+    //  DOM helpers
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+
+    // =====================================================================
+    //  API calls
+    // =====================================================================
+    async function getTraktWatching() {
+      const res = await fetch(
+        `https://api.trakt.tv/users/${TRAKT_USERNAME}/watching`, {
           headers: {
-            'Content-Type': 'application/json',
-            'trakt-api-version': '2',
-            'trakt-api-key': '9e5efaab5af9ff42f947317b83e0089f16dd7bd9b487dc7028dbaa62d5cb66e0'
+            "Content-Type": "application/json",
+            "trakt-api-version": "2",
+            "trakt-api-key": TRAKT_CLIENT_ID
           }
+        }
+      );
+      if (res.status === 204) return null;
+      if (!res.ok) throw new Error(`Trakt ${res.status}`);
+      return res.json();
+    }
+
+    async function getTmdbDetails(type, tmdbId) {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits,videos`
+      );
+      if (!res.ok) return null;
+      return res.json();
+    }
+
+    async function getTmdbEpisode(showTmdbId, season, episode) {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/tv/${showTmdbId}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`
+      );
+      if (!res.ok) return null;
+      return res.json();
+    }
+
+    // =====================================================================
+    //  Trailer
+    // =====================================================================
+    function scheduleTrailer() {
+      clearTimeout(trailerTimer);
+      if (!currentTrailerKey) return;
+      trailerTimer = setTimeout(() => {
+        showTrailer();
+      }, TRAILER_INTERVAL);
+    }
+
+    function showTrailer() {
+      if (!currentTrailerKey) return;
+      const overlay = $("trailer-overlay");
+      const iframe  = $("trailer-iframe");
+      // YouTube embed with autoplay, no controls, muted start then unmute
+      iframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&start=0`;
+      overlay.classList.add("active");
+
+      // Hide trailer after duration, go back to info screen
+      setTimeout(() => {
+        overlay.classList.remove("active");
+        setTimeout(() => { iframe.src = ""; }, 800); // clear after fade
+        scheduleTrailer(); // schedule next one
+      }, TRAILER_DURATION);
+    }
+
+    // =====================================================================
+    //  Render
+    // =====================================================================
+    function showIdle() {
+      currentId = null;
+      currentTrailerKey = null;
+      clearTimeout(trailerTimer);
+      $("content").classList.add("hidden");
+      $("backdrop").style.backgroundImage = "";
+      $("backdrop-gradient").classList.add("hidden");
+      $("idle").classList.remove("hidden");
+      $("trailer-overlay").classList.remove("active");
+      $("trailer-iframe").src = "";
+    }
+
+    function render(data) {
+      $("idle").classList.add("hidden");
+      $("backdrop-gradient").classList.remove("hidden");
+
+      // Fade out, swap, fade in
+      $("content").style.opacity = "0";
+      $("backdrop").style.opacity = "0";
+
+      setTimeout(() => {
+        // Backdrop
+        if (data.backdrop) {
+          $("backdrop").style.backgroundImage = `url(${data.backdrop})`;
+        }
+
+        // Title
+        $("title").textContent = data.title || "";
+
+        // Meta row
+        $("runtime").textContent = data.runtime ? `${data.runtime}min` : "";
+        $("year").textContent = data.year ? `${data.year}${data.status === "Returning Series" ? "–" : ""}` : "";
+
+        // Rating + IMDb badge
+        const ratingEl = $("rating");
+        if (data.rating) {
+          ratingEl.innerHTML = `${data.rating.toFixed(1)} <span class="imdb-badge">IMDb</span>`;
+        } else {
+          ratingEl.innerHTML = "";
+        }
+
+        // Episode tag
+        const epTag = $("episode-tag");
+        if (data.season != null) {
+          const s = String(data.season).padStart(2, "0");
+          const e = String(data.episode).padStart(2, "0");
+          epTag.textContent = `S${s}E${e}${data.episodeTitle ? " · " + data.episodeTitle : ""}`;
+          epTag.classList.remove("hidden");
+        } else {
+          epTag.classList.add("hidden");
+        }
+
+        // Genres
+        const genresEl = $("genres");
+        genresEl.innerHTML = "";
+        if (data.genres?.length) {
+          data.genres.forEach(g => {
+            const span = document.createElement("span");
+            span.className = "pill";
+            span.textContent = g;
+            genresEl.appendChild(span);
+          });
+          $("genres-label").classList.remove("hidden");
+        } else {
+          $("genres-label").classList.add("hidden");
+        }
+
+        // Cast
+        const castEl = $("cast");
+        castEl.innerHTML = "";
+        if (data.cast?.length) {
+          data.cast.forEach(name => {
+            const span = document.createElement("span");
+            span.className = "pill";
+            span.textContent = name;
+            castEl.appendChild(span);
+          });
+          $("cast-label").classList.remove("hidden");
+        } else {
+          $("cast-label").classList.add("hidden");
+        }
+
+        // Summary
+        $("summary").textContent = data.overview || "";
+        $("summary-label").style.display = data.overview ? "" : "none";
+
+        // Show content
+        $("content").classList.remove("hidden");
+
+        // Fade in
+        requestAnimationFrame(() => {
+          $("backdrop").style.opacity = "1";
+          $("content").style.opacity = "1";
         });
 
-        // 204 = nothing playing
-        if (traktRes.status === 204 || traktRes.status === 404) {
-          showNothing();
+        // Trailer
+        currentTrailerKey = data.trailerKey || null;
+        scheduleTrailer();
+
+      }, 400);
+    }
+
+    // =====================================================================
+    //  Main poll loop
+    // =====================================================================
+    async function poll() {
+      try {
+        const trakt = await getTraktWatching();
+
+        if (!trakt || !trakt.type) {
+          showIdle();
           return;
         }
 
-        if (!traktRes.ok) {
-          showNothing();
-          return;
-        }
+        const mediaType = trakt.type;
+        const item      = trakt[mediaType];
+        const show      = trakt.show || null;
 
-        const data = await traktRes.json();
-        if (!data || !data.type) {
-          showNothing();
-          return;
-        }
+        // Dedupe
+        const itemId = mediaType === "episode"
+          ? `${show?.ids?.trakt}-s${item.season}e${item.number}`
+          : `${item.ids?.trakt}`;
+        if (itemId === currentId) return;
+        currentId = itemId;
 
-        // Dedup: only update if content changed
-        const contentKey = `${data.type}-${data[data.type]?.ids?.trakt}`;
-        if (currentContent === contentKey) {
-          return;
-        }
-        currentContent = contentKey;
-
-        const mediaType = data.type; // "movie" or "episode"
-        const item = data[mediaType];
-        const tmdbId = item?.ids?.tmdb;
-
-        if (!tmdbId) {
-          showNothing();
-          return;
-        }
-
-        // Enrich with TMDB
+        // TMDB type + ID
         const tmdbType = mediaType === "episode" ? "tv" : "movie";
-        const tmdbUrl = mediaType === "episode" 
-          ? `https://api.themoviedb.org/3/tv/${data.show.ids.tmdb}?api_key=${TMDB_API_KEY}&append_to_response=credits`
-          : `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits`;
+        const tmdbId   = mediaType === "episode" ? show?.ids?.tmdb : item.ids?.tmdb;
 
-        const tmdbRes = await fetch(tmdbUrl);
-        if (!tmdbRes.ok) {
-          showNothing();
-          return;
+        if (!tmdbId) { showIdle(); return; }
+
+        const tmdb = await getTmdbDetails(tmdbType, tmdbId);
+        if (!tmdb) { showIdle(); return; }
+
+        // Build display object
+        const display = {
+          title:    tmdb.title || tmdb.name || item.title,
+          year:     tmdb.release_date?.slice(0,4) || tmdb.first_air_date?.slice(0,4) || item.year,
+          runtime:  tmdb.runtime || tmdb.episode_run_time?.[0] || null,
+          rating:   tmdb.vote_average || null,
+          status:   tmdb.status || null,
+          overview: tmdb.overview || "",
+          backdrop: tmdb.backdrop_path ? `https://image.tmdb.org/t/p/original${tmdb.backdrop_path}` : null,
+          genres:   (tmdb.genres || []).map(g => g.name),
+          cast:     (tmdb.credits?.cast || []).slice(0, 5).map(a => a.name),
+          trailerKey: null,
+          season: null,
+          episode: null,
+          episodeTitle: null,
+        };
+
+        // Find a YouTube trailer
+        if (tmdb.videos?.results) {
+          const trailer = tmdb.videos.results.find(v =>
+            v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+          );
+          if (trailer) display.trailerKey = trailer.key;
         }
 
-        const tmdbData = await tmdbRes.json();
+        // Episode-specific
+        if (mediaType === "episode") {
+          display.season       = item.season;
+          display.episode      = item.number;
+          display.episodeTitle = item.title;
 
-        // Fade out current content
-        document.getElementById('poster').style.opacity = '0';
-        document.getElementById('fanart').style.opacity = '0';
+          const ep = await getTmdbEpisode(show.ids.tmdb, item.season, item.number);
+          if (ep?.overview) display.overview = ep.overview;
+          if (ep?.runtime)  display.runtime  = ep.runtime;
+        }
 
-        setTimeout(() => {
-          // Update poster
-          if (tmdbData.poster_path) {
-            document.getElementById('poster').src = `https://image.tmdb.org/t/p/original${tmdbData.poster_path}`;
-            document.getElementById('poster').classList.remove('hidden');
-          }
+        render(display);
 
-          // Update backdrop
-          if (tmdbData.backdrop_path) {
-            document.getElementById('fanart').src = `https://image.tmdb.org/t/p/original${tmdbData.backdrop_path}`;
-          }
-
-          // Title
-          const yearStr = tmdbData.release_date ? ` (${tmdbData.release_date.split('-')[0]})` : 
-                          tmdbData.first_air_date ? ` (${tmdbData.first_air_date.split('-')[0]})` : '';
-          document.getElementById('title').textContent = `${tmdbData.title || tmdbData.name}${yearStr}`;
-
-          // Episode info
-          const epInfo = document.getElementById('episode-info');
-          if (mediaType === "episode" && item.season != null) {
-            epInfo.textContent = `S${String(item.season).padStart(2, "0")}E${String(item.number).padStart(2, "0")} — ${item.title || ''}`;
-            epInfo.classList.remove('hidden');
-          } else {
-            epInfo.classList.add('hidden');
-          }
-
-          // Rating
-          document.getElementById('meta').innerHTML = `★ ${(tmdbData.vote_average || 0).toFixed(1)}`;
-
-          // Plot
-          document.getElementById('plot').textContent = tmdbData.overview || '';
-
-          // Cast
-          const castContainer = document.getElementById('cast-container');
-          castContainer.innerHTML = '';
-          if (tmdbData.credits?.cast) {
-            tmdbData.credits.cast.slice(0, 8).forEach(actor => {
-              if (!actor.profile_path) return;
-              const div = document.createElement('div');
-              div.className = 'cast-member';
-              div.innerHTML = `<img src="https://image.tmdb.org/t/p/w185${actor.profile_path}" class="cast-img" loading="lazy"><div class="cast-name">${actor.name}</div>`;
-              castContainer.appendChild(div);
-            });
-            castContainer.classList.remove('hidden');
-          } else {
-            castContainer.classList.add('hidden');
-          }
-
-          document.getElementById('info').classList.remove('hidden');
-          document.getElementById('nothing').classList.add('hidden');
-
-          // Fade back in
-          document.getElementById('poster').style.opacity = '1';
-          document.getElementById('fanart').style.opacity = '0.35';
-        }, 300);
-
-      } catch (e) {
-        console.error("[side-tv]", e);
-        showNothing();
+      } catch (err) {
+        console.error("[side-tv]", err);
       }
     }
 
-    function showNothing() {
-      document.getElementById('poster').classList.add('hidden');
-      document.getElementById('info').classList.add('hidden');
-      document.getElementById('nothing').classList.remove('hidden');
-      currentContent = null;
-    }
+    // =====================================================================
+    //  Init
+    // =====================================================================
+    showIdle();
+    poll();
+    setInterval(poll, POLL_INTERVAL);
 
-    // Initial fetch and poll every 15s
-    fetchNowPlaying();
-    setInterval(fetchNowPlaying, 15000);
+    // Resume on wake (Apple TV / Fire Stick sleep)
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) poll();
+    });
   </script>
 </body>
 </html>
