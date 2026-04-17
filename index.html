@@ -540,6 +540,11 @@
       const remainMin  = Math.max(0, (total - elapsed) / 60000);
       $("progress-elapsed").textContent   = fmtTime(elapsedMin);
       $("progress-remaining").textContent = "-" + fmtTime(remainMin);
+      
+      // Update global data sync
+      window.progressPct = pct;
+      window.progressElapsed = $("progress-elapsed").textContent;
+      window.progressRemaining = $("progress-remaining").textContent;
     }
 
     // =====================================================================
@@ -738,21 +743,56 @@
     }
 
     // =====================================================================
-    //  Data sync (write to localStorage & window.displayData for Roku)
+    //  Data sync (write to data.json for Roku)
     // =====================================================================
     function writeDisplayData(display) {
       // Store in localStorage for persistence
       localStorage.setItem('displayData', JSON.stringify(display));
       
-      // Store in window object for external access
+      // Expose in window object
       window.displayData = display;
       
-      // Log for debugging
-      console.log('[side-tv] Display data updated:', display);
+      // Build data.json-compatible object
+      const elapsed = window.progressElapsed || '0:00';
+      const remaining = window.progressRemaining || '0:00';
+      const progressPct = window.progressPct || 0;
+      
+      const dataJson = {
+        title: display.title || '',
+        status: display.season != null ? `S${String(display.season).padStart(2, '0')}E${String(display.episode).padStart(2, '0')}` : 'Now Playing',
+        poster: display.poster || '',
+        summary: display.overview || '',
+        tagline: display.tagline || '',
+        year: display.year || '',
+        runtime: display.runtime ? (typeof display.runtime === 'number' ? `${display.runtime}m` : display.runtime) : '',
+        imdbRating: display.imdbRating || '',
+        rtScore: display.rtScore || null,
+        metaScore: display.metaScore || '',
+        certification: display.certification || '',
+        genres: display.genres || [],
+        cast: display.cast?.map(c => c.name) || [],
+        directors: display.directors || [],
+        overview: display.overview || '',
+        network: display.network ? { name: display.network.name, logo: display.network.logo } : null,
+        progressPct: progressPct,
+        elapsed: elapsed,
+        remaining: remaining
+      };
+      
+      // Store in window for Roku to access
+      window.dataJson = dataJson;
+      window.displayJson = JSON.stringify(dataJson);
+      
+      console.log('[side-tv] Display data synced:', dataJson);
     }
     
     // Expose current display data globally
     window.displayData = null;
+    window.dataJson = null;
+    window.displayJson = null;
+    window.progressPct = 0;
+    window.progressElapsed = '0:00';
+    window.progressRemaining = '0:00';
 
     // =====================================================================
     //  Main poll loop
