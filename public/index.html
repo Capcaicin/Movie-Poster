@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Now Watching • Side TV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; background: #0a0a0a; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; height: 100vh; }
+    .fanart { position: absolute; inset: 0; object-fit: cover; opacity: 0.35; filter: blur(8px); z-index: 1; }
+    .poster { max-height: 68vh; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.6); border-radius: 16px; z-index: 2; }
+    .info { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, #0a0a0a, transparent); padding: 40px 60px; z-index: 3; }
+    .title { font-size: 3.2rem; font-weight: 700; line-height: 1.1; margin: 0 0 12px 0; }
+    .meta { font-size: 1.35rem; opacity: 0.9; margin-bottom: 16px; }
+    .plot { font-size: 1.25rem; max-width: 820px; line-height: 1.5; opacity: 0.85; }
+    .cast { display: flex; gap: 24px; margin-top: 28px; overflow-x: auto; padding-bottom: 12px; }
+    .cast-member { text-align: center; width: 92px; flex-shrink: 0; }
+    .cast-img { width: 82px; height: 82px; border-radius: 9999px; object-fit: cover; border: 3px solid #fff; }
+    .cast-name { font-size: 0.95rem; margin-top: 8px; opacity: 0.85; }
+    .nothing { font-size: 2.8rem; opacity: 0.6; text-align: center; margin-top: 20vh; }
+    .episode-info { font-size: 1.1rem; opacity: 0.75; margin-bottom: 8px; }
+    .auth-overlay { position: fixed; inset: 0; background: #0a0a0a; z-index: 100; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+    .auth-overlay h2 { font-size: 2rem; font-weight: 600; }
+    .auth-code { font-size: 4rem; font-weight: 800; letter-spacing: 0.3em; color: #ed1c24; }
+    .auth-url { font-size: 1.2rem; opacity: 0.7; }
+    .auth-btn { background: #ed1c24; color: #fff; border: none; padding: 14px 32px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; }
+    .auth-btn:hover { background: #c71a21; }
+    .auth-status { font-size: 1rem; opacity: 0.6; }
+  </style>
+</head>
+<body class="flex items-center justify-center">
+  <!-- AUTH OVERLAY (shown only when not authenticated) -->
+  <div id="auth-overlay" class="auth-overlay hidden">
+    <h2>Side TV Setup</h2>
+    <div id="auth-step-start">
+      <button class="auth-btn" onclick="startAuth()">Connect Trakt Account</button>
+    </div>
+    <div id="auth-step-code" class="hidden" style="text-align:center;">
+      <p class="auth-url">Go to <strong id="auth-url"></strong> and enter:</p>
+      <div class="auth-code" id="auth-code"></div>
+      <p class="auth-status" id="auth-polling-status">Waiting for authorization...</p>
+    </div>
+    <div id="auth-step-done" class="hidden" style="text-align:center;">
+      <p style="font-size:1.5rem;">Connected!</p>
+      <p class="auth-status">Loading now playing...</p>
+    </div>
+  </div>
+
+  <img id="fanart" class="fanart" src="" alt="">
+
+  <div class="relative z-10 flex flex-col items-center justify-center h-screen w-full px-8">
+    <img id="poster" class="poster hidden" src="" alt="Poster">
+
+    <div id="info" class="info hidden">
+      <div class="episode-info hidden" id="episode-info"></div>
+      <div class="title" id="title"></div>
+      <div class="meta" id="meta"></div>
+      <div class="plot" id="plot"></div>
+      <div id="cast-container" class="cast hidden"></div>
+    </div>
+
+    <div id="nothing" class="nothing hidden">Nothing playing right now</div>
+  </div>
+
+  <script>
+    // ---- Auth flow ----------------------------------------------------------
+    async function checkAuth() {
+      const res = await fetch("/auth/status");
+      const data = await res.json();
+      if (!data.authenticated) {
+        document.getElementById("auth-overlay").classList.remove("hidden");
+        return false;
+      }
+      document.getElementById("auth-overlay").classList.add("hidden");
+      return true;
+    }
+
+    async function startAuth() {
+      document.getElementById("auth-step-start").classList.add("hidden");
+      document.getElementById("auth-step-code").classList.remove("hidden");
+
+      const res = await fetch("/auth/device", { method: "POST" });
+      const data = await res.json();
+
+      document.getElementById("auth-url").textContent = data.verification_url;
+      document.getElementById("auth-code").textContent = data.user_code;
+
+      pollForAuth();
+    }
+
+    async function pollForAuth() {
+      const res = await fetch("/auth/poll", { method: "POST" });
+      const data = await res.json();
+
+      if (data.status === "authorized") {
+        document.getElementById("auth-step-code").classList.add("hidden");
+        document.getElementById("auth-step-done").classList.remove("hidden");
+        setTimeout(() => {
+          document.getElementById("auth-overlay").classList.add("hidden");
+          fetchNowPlaying();
+        }, 1500);
+        return;
+      }
+
+      if (data.status === "denied" || data.status === "expired") {
+        document.getElementById("auth-polling-status").textContent =
+          `Authorization ${data.status}. Refresh page to retry.`;
+        return;
+      }
+
+      // Still pending — poll again
+      const interval = (data.interval || 5) * 1000;
+      setTimeout(pollForAuth, interval);
+    }
+
+    // ---- Now Playing --------------------------------------------------------
+    async function fetchNowPlaying() {
+      try {
+        const res = await fetch("/api/now-playing");
+        if (res.status === 401 || res.status === 403) {
+          checkAuth();
+          return;
+        }
+        const data = await res.json();
+
+        if (!data.playing) {
+          document.getElementById("poster").classList.add("hidden");
+          document.getElementById("info").classList.add("hidden");
+          document.getElementById("nothing").classList.remove("hidden");
+          document.getElementById("fanart").src = "";
+          return;
+        }
+
+        // Poster
+        if (data.poster) {
+          document.getElementById("poster").src = data.poster;
+          document.getElementById("poster").classList.remove("hidden");
+        }
+
+        // Backdrop
+        if (data.backdrop) {
+          document.getElementById("fanart").src = data.backdrop;
+        }
+
+        // Title
+        const yearStr = data.year ? ` (${data.year})` : "";
+        document.getElementById("title").textContent = `${data.title}${yearStr}`;
+
+        // Episode info
+        const epInfo = document.getElementById("episode-info");
+        if (data.type === "episode" && data.season != null) {
+          epInfo.textContent = `S${String(data.season).padStart(2, "0")}E${String(data.episode).padStart(2, "0")} — ${data.episode_title || ""}`;
+          epInfo.classList.remove("hidden");
+        } else {
+          epInfo.classList.add("hidden");
+        }
+
+        // Rating
+        document.getElementById("meta").innerHTML = `★ ${(data.rating || 0).toFixed(1)}`;
+
+        // Plot
+        const overview = data.type === "episode"
+          ? (data.episode_overview || data.overview || "")
+          : (data.overview || "");
+        document.getElementById("plot").textContent = overview;
+
+        // Cast
+        const castContainer = document.getElementById("cast-container");
+        castContainer.innerHTML = "";
+        if (data.cast && data.cast.length > 0) {
+          data.cast.forEach(actor => {
+            if (!actor.photo) return;
+            const div = document.createElement("div");
+            div.className = "cast-member";
+            div.innerHTML = `<img src="${actor.photo}" class="cast-img" loading="lazy"><div class="cast-name">${actor.name}</div>`;
+            castContainer.appendChild(div);
+          });
+          castContainer.classList.remove("hidden");
+        } else {
+          castContainer.classList.add("hidden");
+        }
+
+        document.getElementById("info").classList.remove("hidden");
+        document.getElementById("nothing").classList.add("hidden");
+
+      } catch (e) {
+        console.error("[side-tv]", e);
+      }
+    }
+
+    // ---- Init ---------------------------------------------------------------
+    async function init() {
+      const authed = await checkAuth();
+      if (authed) fetchNowPlaying();
+      setInterval(fetchNowPlaying, 15000);
+    }
+    init();
+  </script>
+</body>
+</html>

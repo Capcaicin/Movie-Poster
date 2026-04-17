@@ -1,0 +1,13 @@
+{
+  "name": "side-tv-proxy",
+  "version": "1.0.0",
+  "description": "Backend proxy for Side TV Now Watching display (Trakt + TMDB)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
