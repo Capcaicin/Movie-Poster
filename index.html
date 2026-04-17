@@ -26,8 +26,9 @@
     }
     .backdrop-gradient {
       position: fixed; inset: 0;
-      background: linear-gradient(to right, #0a0a14 0%, #0a0a14 30%, rgba(10,10,20,0.85) 50%, rgba(10,10,20,0.4) 75%, rgba(10,10,20,0.2) 100%),
-                  linear-gradient(to top, #0a0a14 0%, transparent 40%);
+      background:
+        linear-gradient(to right, #0a0a14 0%, #0a0a14 28%, rgba(10,10,20,0.92) 42%, rgba(10,10,20,0.6) 60%, rgba(10,10,20,0.25) 80%, rgba(10,10,20,0.1) 100%),
+        linear-gradient(to top, #0a0a14 0%, rgba(10,10,20,0.6) 25%, transparent 50%);
       z-index: 2;
     }
 
@@ -35,8 +36,8 @@
     .content {
       position: fixed;
       top: 0; left: 0; bottom: 0;
-      width: 55%;
-      padding: 60px 60px 50px 60px;
+      width: 56%;
+      padding: 48px 50px 40px 50px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -46,26 +47,37 @@
 
     /* ── Title ── */
     .show-title {
-      font-size: 4.2rem;
+      font-size: 3.8rem;
       font-weight: 900;
       line-height: 1.0;
       letter-spacing: -0.02em;
       text-transform: uppercase;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
       text-shadow: 0 4px 30px rgba(0,0,0,0.7);
     }
 
-    /* ── Meta row: runtime, year, rating ── */
+    /* ── Tagline ── */
+    .tagline {
+      font-size: 1.05rem;
+      font-style: italic;
+      opacity: 0.5;
+      margin-bottom: 18px;
+      max-width: 500px;
+    }
+
+    /* ── Meta row ── */
     .meta-row {
       display: flex;
       align-items: center;
-      gap: 28px;
-      font-size: 1.15rem;
+      gap: 18px;
+      font-size: 1.05rem;
       font-weight: 500;
       opacity: 0.9;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
     }
-    .meta-row .rating {
+    .meta-row .separator { opacity: 0.35; }
+    .rating-group {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -75,59 +87,134 @@
       background: #f5c518;
       color: #000;
       font-weight: 800;
-      font-size: 0.7rem;
-      padding: 2px 6px;
+      font-size: 0.65rem;
+      padding: 2px 5px;
       border-radius: 3px;
       letter-spacing: 0.05em;
+    }
+    .cert-badge {
+      display: inline-block;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      opacity: 0.85;
     }
     .episode-tag {
       background: rgba(255,255,255,0.15);
       padding: 4px 12px;
       border-radius: 4px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      margin-bottom: 20px;
+      max-width: 500px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #e50914;
+      border-radius: 2px;
+      transition: width 15s linear;
+    }
+    .progress-times {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      opacity: 0.45;
+      margin-top: 5px;
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── Section labels ── */
     .section-label {
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.72rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      opacity: 0.5;
-      margin-bottom: 10px;
-      margin-top: 20px;
+      letter-spacing: 0.14em;
+      opacity: 0.4;
+      margin-bottom: 8px;
+      margin-top: 16px;
     }
 
-    /* ── Pills (genres + cast) ── */
+    /* ── Pills ── */
     .pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 7px;
     }
     .pill {
-      background: rgba(255,255,255,0.12);
-      padding: 6px 16px;
+      background: rgba(255,255,255,0.1);
+      padding: 5px 14px;
       border-radius: 20px;
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       font-weight: 500;
       white-space: nowrap;
     }
 
+    /* ── Director / Creator ── */
+    .credit-line {
+      font-size: 0.92rem;
+      opacity: 0.65;
+      margin-top: 14px;
+    }
+    .credit-line strong {
+      opacity: 1;
+      font-weight: 600;
+    }
+
     /* ── Summary ── */
     .summary {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      opacity: 0.85;
-      max-width: 600px;
-      margin-top: 8px;
+      font-size: 1.0rem;
+      line-height: 1.55;
+      opacity: 0.8;
+      max-width: 560px;
+      margin-top: 6px;
       display: -webkit-box;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    /* ── Idle state ── */
+    /* ── Network / Studio ── */
+    .network-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      opacity: 0.5;
+      font-size: 0.85rem;
+    }
+    .network-logo {
+      height: 20px;
+      filter: brightness(0) invert(1);
+      opacity: 0.7;
+    }
+
+    /* ── Poster (bottom-right accent) ── */
+    .poster-float {
+      position: fixed;
+      bottom: 40px;
+      right: 50px;
+      width: 180px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      z-index: 4;
+      transition: opacity 0.6s ease;
+    }
+
+    /* ── Idle ── */
     .idle-screen {
       position: fixed; inset: 0;
       display: flex;
@@ -164,10 +251,6 @@
       border: none;
     }
 
-    /* ── Fade transitions ── */
-    .fade-out { opacity: 0 !important; }
-    .fade-in  { opacity: 1 !important; }
-
     .hidden { display: none !important; }
   </style>
 </head>
@@ -177,15 +260,33 @@
   <div class="backdrop" id="backdrop"></div>
   <div class="backdrop-gradient" id="backdrop-gradient"></div>
 
+  <!-- POSTER (floating bottom-right) -->
+  <img class="poster-float hidden" id="poster" src="" alt="">
+
   <!-- CONTENT (left panel) -->
   <div class="content" id="content">
     <div class="show-title" id="title"></div>
+    <div class="tagline hidden" id="tagline"></div>
 
     <div class="meta-row" id="meta-row">
+      <span class="cert-badge hidden" id="cert"></span>
       <span id="runtime"></span>
+      <span class="separator">•</span>
       <span id="year"></span>
-      <span class="rating" id="rating"></span>
+      <span class="separator">•</span>
+      <span class="rating-group" id="rating"></span>
       <span class="episode-tag hidden" id="episode-tag"></span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-wrap hidden" id="progress-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-times">
+        <span id="progress-elapsed">0:00</span>
+        <span id="progress-remaining">0:00</span>
+      </div>
     </div>
 
     <div class="section-label" id="genres-label">GENRES</div>
@@ -194,8 +295,15 @@
     <div class="section-label" id="cast-label">CAST</div>
     <div class="pills" id="cast"></div>
 
+    <div class="credit-line hidden" id="credit-line"></div>
+
     <div class="section-label" id="summary-label">SUMMARY</div>
     <div class="summary" id="summary"></div>
+
+    <div class="network-line hidden" id="network-line">
+      <img class="network-logo hidden" id="network-logo" src="" alt="">
+      <span id="network-name"></span>
+    </div>
   </div>
 
   <!-- IDLE -->
@@ -212,12 +320,12 @@
     // =====================================================================
     //  CONFIG
     // =====================================================================
-    const TRAKT_USERNAME  = "tannorino";
-    const TRAKT_CLIENT_ID = "9e5efaab5af9ff42f947317b83e0089f16dd7bd9b487dc7028dbaa62d5cb66e0";
-    const TMDB_API_KEY    = "86341e3584cca1bc1543a57b43d12bd9";
-    const POLL_INTERVAL   = 15000;
-    const TRAILER_INTERVAL = 5 * 60 * 1000; // play trailer every 5 minutes
-    const TRAILER_DURATION = 60 * 1000;      // show trailer for 60 seconds
+    const TRAKT_USERNAME   = "tannorino";
+    const TRAKT_CLIENT_ID  = "9e5efaab5af9ff42f947317b83e0089f16dd7bd9b487dc7028dbaa62d5cb66e0";
+    const TMDB_API_KEY     = "86341e3584cca1bc1543a57b43d12bd9";
+    const POLL_INTERVAL    = 15000;
+    const TRAILER_INTERVAL = 5 * 60 * 1000;
+    const TRAILER_DURATION = 60 * 1000;
 
     // =====================================================================
     //  State
@@ -225,12 +333,14 @@
     let currentId = null;
     let currentTrailerKey = null;
     let trailerTimer = null;
-    let missCount = 0;                        // how many polls returned "nothing"
-    const MISS_GRACE = 4;                     // stay on screen for 4 misses (60s at 15s interval)
+    let progressTimer = null;
+    let missCount = 0;
+    const MISS_GRACE = 4;
 
-    // =====================================================================
-    //  DOM helpers
-    // =====================================================================
+    // Trakt timestamps for progress bar
+    let playStarted = null;
+    let playExpires = null;
+
     const $ = id => document.getElementById(id);
 
     // =====================================================================
@@ -252,8 +362,11 @@
     }
 
     async function getTmdbDetails(type, tmdbId) {
+      const extra = type === "tv"
+        ? "credits,videos,content_ratings"
+        : "credits,videos,release_dates";
       const res = await fetch(
-        `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits,videos`
+        `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=${extra}`
       );
       if (!res.ok) return null;
       return res.json();
@@ -261,10 +374,69 @@
 
     async function getTmdbEpisode(showTmdbId, season, episode) {
       const res = await fetch(
-        `https://api.themoviedb.org/3/tv/${showTmdbId}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`
+        `https://api.themoviedb.org/3/tv/${showTmdbId}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}&append_to_response=credits`
       );
       if (!res.ok) return null;
       return res.json();
+    }
+
+    // =====================================================================
+    //  Helpers
+    // =====================================================================
+    function getCertification(tmdb, type) {
+      if (type === "tv") {
+        const us = tmdb.content_ratings?.results?.find(r => r.iso_3166_1 === "US");
+        return us?.rating || null;
+      } else {
+        const us = tmdb.release_dates?.results?.find(r => r.iso_3166_1 === "US");
+        const cert = us?.release_dates?.find(r => r.certification);
+        return cert?.certification || null;
+      }
+    }
+
+    function getDirector(tmdb, type) {
+      if (type === "tv") {
+        return tmdb.created_by?.map(c => c.name) || [];
+      } else {
+        return (tmdb.credits?.crew || [])
+          .filter(c => c.job === "Director")
+          .map(c => c.name);
+      }
+    }
+
+    function fmtTime(mins) {
+      const h = Math.floor(mins / 60);
+      const m = Math.round(mins % 60);
+      return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    }
+
+    // =====================================================================
+    //  Progress bar
+    // =====================================================================
+    function startProgress() {
+      clearInterval(progressTimer);
+      if (!playStarted || !playExpires) {
+        $("progress-wrap").classList.add("hidden");
+        return;
+      }
+      $("progress-wrap").classList.remove("hidden");
+      updateProgress();
+      progressTimer = setInterval(updateProgress, 1000);
+    }
+
+    function updateProgress() {
+      if (!playStarted || !playExpires) return;
+      const now     = Date.now();
+      const total   = playExpires - playStarted;
+      const elapsed = now - playStarted;
+      const pct     = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
+      $("progress-fill").style.width = pct + "%";
+
+      const elapsedMin = Math.max(0, elapsed / 60000);
+      const remainMin  = Math.max(0, (total - elapsed) / 60000);
+      $("progress-elapsed").textContent   = fmtTime(elapsedMin);
+      $("progress-remaining").textContent = "-" + fmtTime(remainMin);
     }
 
     // =====================================================================
@@ -273,24 +445,17 @@
     function scheduleTrailer() {
       clearTimeout(trailerTimer);
       if (!currentTrailerKey) return;
-      trailerTimer = setTimeout(() => {
-        showTrailer();
-      }, TRAILER_INTERVAL);
+      trailerTimer = setTimeout(showTrailer, TRAILER_INTERVAL);
     }
 
     function showTrailer() {
       if (!currentTrailerKey) return;
-      const overlay = $("trailer-overlay");
-      const iframe  = $("trailer-iframe");
-      // YouTube embed with autoplay, no controls, muted start then unmute
-      iframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&start=0`;
-      overlay.classList.add("active");
-
-      // Hide trailer after duration, go back to info screen
+      $("trailer-iframe").src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+      $("trailer-overlay").classList.add("active");
       setTimeout(() => {
-        overlay.classList.remove("active");
-        setTimeout(() => { iframe.src = ""; }, 800); // clear after fade
-        scheduleTrailer(); // schedule next one
+        $("trailer-overlay").classList.remove("active");
+        setTimeout(() => { $("trailer-iframe").src = ""; }, 800);
+        scheduleTrailer();
       }, TRAILER_DURATION);
     }
 
@@ -300,8 +465,12 @@
     function showIdle() {
       currentId = null;
       currentTrailerKey = null;
+      playStarted = null;
+      playExpires = null;
       clearTimeout(trailerTimer);
+      clearInterval(progressTimer);
       $("content").classList.add("hidden");
+      $("poster").classList.add("hidden");
       $("backdrop").style.backgroundImage = "";
       $("backdrop-gradient").classList.add("hidden");
       $("idle").classList.remove("hidden");
@@ -313,9 +482,9 @@
       $("idle").classList.add("hidden");
       $("backdrop-gradient").classList.remove("hidden");
 
-      // Fade out, swap, fade in
       $("content").style.opacity = "0";
       $("backdrop").style.opacity = "0";
+      $("poster").style.opacity  = "0";
 
       setTimeout(() => {
         // Backdrop
@@ -323,14 +492,44 @@
           $("backdrop").style.backgroundImage = `url(${data.backdrop})`;
         }
 
+        // Poster
+        if (data.poster) {
+          $("poster").src = data.poster;
+          $("poster").classList.remove("hidden");
+        } else {
+          $("poster").classList.add("hidden");
+        }
+
         // Title
         $("title").textContent = data.title || "";
 
-        // Meta row
-        $("runtime").textContent = data.runtime ? `${data.runtime}min` : "";
-        $("year").textContent = data.year ? `${data.year}${data.status === "Returning Series" ? "–" : ""}` : "";
+        // Tagline
+        const tagEl = $("tagline");
+        if (data.tagline) {
+          tagEl.textContent = `"${data.tagline}"`;
+          tagEl.classList.remove("hidden");
+        } else {
+          tagEl.classList.add("hidden");
+        }
 
-        // Rating + IMDb badge
+        // Certification
+        const certEl = $("cert");
+        if (data.certification) {
+          certEl.textContent = data.certification;
+          certEl.classList.remove("hidden");
+        } else {
+          certEl.classList.add("hidden");
+        }
+
+        // Runtime
+        $("runtime").textContent = data.runtime ? fmtTime(data.runtime) : "";
+
+        // Year
+        $("year").textContent = data.year
+          ? `${data.year}${data.status === "Returning Series" ? "–" : ""}`
+          : "";
+
+        // Rating
         const ratingEl = $("rating");
         if (data.rating) {
           ratingEl.innerHTML = `${data.rating.toFixed(1)} <span class="imdb-badge">IMDb</span>`;
@@ -368,10 +567,10 @@
         const castEl = $("cast");
         castEl.innerHTML = "";
         if (data.cast?.length) {
-          data.cast.forEach(name => {
+          data.cast.forEach(c => {
             const span = document.createElement("span");
             span.className = "pill";
-            span.textContent = name;
+            span.textContent = c.character ? `${c.name} as ${c.character}` : c.name;
             castEl.appendChild(span);
           });
           $("cast-label").classList.remove("hidden");
@@ -379,9 +578,34 @@
           $("cast-label").classList.add("hidden");
         }
 
+        // Director / Creator
+        const creditEl = $("credit-line");
+        if (data.directors?.length) {
+          const label = data.isTV ? "Created by" : "Directed by";
+          creditEl.innerHTML = `${label} <strong>${data.directors.join(", ")}</strong>`;
+          creditEl.classList.remove("hidden");
+        } else {
+          creditEl.classList.add("hidden");
+        }
+
         // Summary
         $("summary").textContent = data.overview || "";
         $("summary-label").style.display = data.overview ? "" : "none";
+
+        // Network / Studio
+        const netLine = $("network-line");
+        if (data.network) {
+          $("network-name").textContent = data.network.name;
+          if (data.network.logo) {
+            $("network-logo").src = data.network.logo;
+            $("network-logo").classList.remove("hidden");
+          } else {
+            $("network-logo").classList.add("hidden");
+          }
+          netLine.classList.remove("hidden");
+        } else {
+          netLine.classList.add("hidden");
+        }
 
         // Show content
         $("content").classList.remove("hidden");
@@ -389,8 +613,12 @@
         // Fade in
         requestAnimationFrame(() => {
           $("backdrop").style.opacity = "1";
-          $("content").style.opacity = "1";
+          $("content").style.opacity  = "1";
+          $("poster").style.opacity   = "1";
         });
+
+        // Progress bar
+        startProgress();
 
         // Trailer
         currentTrailerKey = data.trailerKey || null;
@@ -407,15 +635,14 @@
         const trakt = await getTraktWatching();
 
         if (!trakt || !trakt.type) {
-          // Don't immediately wipe — allow brief scrobbling gaps
           if (currentId) {
             missCount++;
-            if (missCount < MISS_GRACE) return; // keep showing last content
+            if (missCount < MISS_GRACE) return;
           }
           showIdle();
           return;
         }
-        missCount = 0; // reset on successful fetch
+        missCount = 0;
 
         const mediaType = trakt.type;
         const item      = trakt[mediaType];
@@ -428,33 +655,60 @@
         if (itemId === currentId) return;
         currentId = itemId;
 
-        // TMDB type + ID
+        // Store Trakt timestamps for progress bar
+        playStarted = trakt.started_at ? new Date(trakt.started_at).getTime() : null;
+        playExpires = trakt.expires_at ? new Date(trakt.expires_at).getTime() : null;
+
+        // TMDB
         const tmdbType = mediaType === "episode" ? "tv" : "movie";
         const tmdbId   = mediaType === "episode" ? show?.ids?.tmdb : item.ids?.tmdb;
-
         if (!tmdbId) { showIdle(); return; }
 
         const tmdb = await getTmdbDetails(tmdbType, tmdbId);
         if (!tmdb) { showIdle(); return; }
 
-        // Build display object
+        // Build display
         const display = {
-          title:    tmdb.title || tmdb.name || item.title,
-          year:     tmdb.release_date?.slice(0,4) || tmdb.first_air_date?.slice(0,4) || item.year,
-          runtime:  tmdb.runtime || tmdb.episode_run_time?.[0] || null,
-          rating:   tmdb.vote_average || null,
-          status:   tmdb.status || null,
-          overview: tmdb.overview || "",
-          backdrop: tmdb.backdrop_path ? `https://image.tmdb.org/t/p/original${tmdb.backdrop_path}` : null,
-          genres:   (tmdb.genres || []).map(g => g.name),
-          cast:     (tmdb.credits?.cast || []).slice(0, 5).map(a => a.name),
-          trailerKey: null,
-          season: null,
-          episode: null,
-          episodeTitle: null,
+          title:         tmdb.title || tmdb.name || item.title,
+          tagline:       tmdb.tagline || null,
+          year:          tmdb.release_date?.slice(0,4) || tmdb.first_air_date?.slice(0,4) || item.year,
+          runtime:       tmdb.runtime || tmdb.episode_run_time?.[0] || null,
+          rating:        tmdb.vote_average || null,
+          certification: getCertification(tmdb, tmdbType),
+          status:        tmdb.status || null,
+          overview:      tmdb.overview || "",
+          isTV:          tmdbType === "tv",
+          backdrop:      tmdb.backdrop_path ? `https://image.tmdb.org/t/p/original${tmdb.backdrop_path}` : null,
+          poster:        tmdb.poster_path   ? `https://image.tmdb.org/t/p/w500${tmdb.poster_path}` : null,
+          genres:        (tmdb.genres || []).map(g => g.name),
+          directors:     getDirector(tmdb, tmdbType),
+          cast:          (tmdb.credits?.cast || []).slice(0, 6).map(a => ({
+                           name: a.name,
+                           character: a.character || null,
+                         })),
+          network:       null,
+          trailerKey:    null,
+          season:        null,
+          episode:       null,
+          episodeTitle:  null,
         };
 
-        // Find a YouTube trailer
+        // Network / Studio
+        if (tmdb.networks?.length) {
+          const net = tmdb.networks[0];
+          display.network = {
+            name: net.name,
+            logo: net.logo_path ? `https://image.tmdb.org/t/p/w92${net.logo_path}` : null,
+          };
+        } else if (tmdb.production_companies?.length) {
+          const co = tmdb.production_companies[0];
+          display.network = {
+            name: co.name,
+            logo: co.logo_path ? `https://image.tmdb.org/t/p/w92${co.logo_path}` : null,
+          };
+        }
+
+        // Trailer
         if (tmdb.videos?.results) {
           const trailer = tmdb.videos.results.find(v =>
             v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
@@ -469,8 +723,16 @@
           display.episodeTitle = item.title;
 
           const ep = await getTmdbEpisode(show.ids.tmdb, item.season, item.number);
-          if (ep?.overview) display.overview = ep.overview;
-          if (ep?.runtime)  display.runtime  = ep.runtime;
+          if (ep) {
+            if (ep.overview) display.overview = ep.overview;
+            if (ep.runtime)  display.runtime  = ep.runtime;
+            // Episode director
+            const epDir = (ep.credits?.crew || []).filter(c => c.job === "Director").map(c => c.name);
+            if (epDir.length) {
+              display.directors = epDir;
+              display.isTV = false; // say "Directed by" for episode director
+            }
+          }
         }
 
         render(display);
@@ -487,7 +749,6 @@
     poll();
     setInterval(poll, POLL_INTERVAL);
 
-    // Resume on wake (Apple TV / Fire Stick sleep)
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) poll();
     });
