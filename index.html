@@ -982,44 +982,10 @@
       $("progress-remaining").textContent = "-" + fmtTime(Math.max(0, (total - elapsed) / 60000));
     }
 
-    // =====================================================================
-    //  Trailer
-    // =====================================================================
-    function showTrailer() {
-      if (!currentTrailerKey) return;
-      // Autoplay muted — required by all TV browsers for autoplay to work
-      $("trailer-iframe").src =
-        "https://www.youtube.com/embed/" + currentTrailerKey +
-        "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1";
-      $("trailer-overlay").classList.add("active");
-
-      // End trailer after duration, fade back to info
-      clearTimeout(trailerEndTimer);
-      trailerEndTimer = setTimeout(hideTrailer, TRAILER_DURATION);
-    }
-
-    function hideTrailer() {
-      $("trailer-overlay").classList.remove("active");
-      clearTimeout(trailerEndTimer);
-      // Kill iframe after fade-out finishes
-      setTimeout(function() {
-        $("trailer-iframe").src = "";
-      }, 900);
-    }
-
-    function scheduleTrailer() {
-      clearTimeout(trailerTimer);
-      if (!currentTrailerKey) return;
-      trailerTimer = setTimeout(showTrailer, TRAILER_DELAY);
-    }
-
-    function killTrailer() {
-      clearTimeout(trailerTimer);
-      clearTimeout(trailerEndTimer);
-      currentTrailerKey = null;
-      $("trailer-overlay").classList.remove("active");
-      $("trailer-iframe").src = "";
-    }
+    function showTrailer() { }
+    function hideTrailer() { }
+    function scheduleTrailer() { }
+    function killTrailer() { clearTimeout(trailerTimer); clearTimeout(trailerEndTimer); currentTrailerKey = null; }
 
     // =====================================================================
     //  Render
