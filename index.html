@@ -674,53 +674,7 @@
       text-transform: uppercase;
     }
 
-    /* ══════════════════════════════════════════════════════
-       TRAILER OVERLAY — optimized for vertical screens
-       ══════════════════════════════════════════════════════ */
-    .trailer-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #000;
-      z-index: 10;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.8s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .trailer-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .trailer-overlay iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      max-height: 100vh;
-    }
-    .trailer-label {
-      position: absolute;
-      top: 20px;
-      left: 30px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 11;
-      opacity: 0.5;
-      transition: opacity 3s ease;
-    }
-    .trailer-overlay.active .trailer-label {
-      opacity: 0;
-      transition-delay: 3s;
-    }
-    .trailer-label-text {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: #fff;
-    }
+
 
     .hidden { display: none !important; }
   </style>
@@ -801,13 +755,7 @@
     </div>
   </div>
 
-  <!-- TRAILER OVERLAY -->
-  <div class="trailer-overlay" id="trailer-overlay">
-    <div class="trailer-label">
-      <div class="trailer-label-text">TRAILER</div>
-    </div>
-    <iframe id="trailer-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  </div>
+
 
   <!-- IDLE SCREEN — ambient aurora -->
   <div class="idle-screen" id="idle-screen">
